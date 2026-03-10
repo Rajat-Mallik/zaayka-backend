@@ -15,7 +15,10 @@ const port = process.env.PORT || 4000;
 
 // middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:5173", "https://zaayka-frontend-kjqnp9ka9-malikrajat19102001-2275s-projects.vercel.app"],
+  credentials: true
+}));
 
 // db connection
 connectDB();
