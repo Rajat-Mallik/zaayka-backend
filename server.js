@@ -16,7 +16,17 @@ const port = process.env.PORT || 4000;
 // middleware
 app.use(express.json());
 app.use(cors({
-  origin: ["http://localhost:5173", "https://zaayka-frontend-kjqnp9ka9-malikrajat19102001-2275s-projects.vercel.app"],
+  origin: function (origin, callback) {
+    if (
+      !origin ||
+      origin.includes("vercel.app") ||
+      origin === "http://localhost:5173"
+    ) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }));
 
