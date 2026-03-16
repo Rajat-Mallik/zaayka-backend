@@ -31,6 +31,9 @@ app.use(cors({
   credentials: true
 }));
 
+// handle preflight requests
+app.options("*", cors())
+
 // db connection
 connectDB();
 
