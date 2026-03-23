@@ -1,24 +1,42 @@
 import foodModel from "../models/foodModel.js";
+import cloudinary from "../config/cloudinary.js";
 import fs from 'fs';
 
 
 // add food item
 const addFood = async (req, res) => {
-  
-  let image_filename = `${req.file.filename}`;
-
-
-  const food = new foodModel({
-    name: req.body.name,
-    description: req.body.description,
-    price: req.body.price,
-    category: req.body.category,
-    image: image_filename
-  })
-
   try {
-    await food.save();
-    res.json({success: true, message: "Food Added"})
+    const file = req.file;
+
+    // Upload to Cloudinary
+    const result = await cloudinary.uploader.upload_stream(
+      { folder: "zaayka_food" },
+      async (error, result) => {
+        if (error) {
+          return res.status(500).json({ success: false, message: "Upload failed" });
+        }
+
+        const imageUrl = result.secure_url;
+
+        // Save to DB
+        const food = new foodModel({
+          name: req.body.name,
+          description: req.body.description,
+          price: req.body.price,
+          category: req.body.category,
+          image: imageUrl,
+        });
+
+        await food.save();
+
+        res.json({ success: true, message: "Food Added" });
+      }
+    );
+
+    // Pipe buffer to cloudinary
+    const stream = result;
+    stream.end(file.buffer);
+
   } catch (error) {
     console.log(error);
     res.json({success: false, message: "Error in adding food"})

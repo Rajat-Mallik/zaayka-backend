@@ -21,7 +21,7 @@ app.use(cors({
     if (
       !origin ||
       origin.includes("vercel.app") ||
-      origin === "http://localhost:5173"
+      origin.includes("localhost")
     ) {
       callback(null, true);
     } else {
@@ -39,7 +39,7 @@ connectDB();
 
 // api endpoints
 app.use("/api/food", foodRouter);
-app.use("/images", express.static('uploads'))
+// app.use("/images", express.static('uploads'))
 app.use("/api/user", userRouter)
 app.use("/api/cart", cartRouter)
 app.use("/api/order", orderRouter)
